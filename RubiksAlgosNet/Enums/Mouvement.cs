@@ -19,6 +19,15 @@ namespace RubiksAlgosNet.Enums
         u = -104, uPrime = -105,
         d = -106, dPrime = -107,
         f = -108, fPrime = -109,
-        b = -110, bPrime = -111
+        b = -110, bPrime = -111,
+        x = 18,
+        xPrime = 19,
+        y = 20,
+        yPrime = 21,
+        z = 22,
+        zPrime = 23,
+        x2 = 24,
+        y2 = 25,
+        z2 = 26
     }  
 }
