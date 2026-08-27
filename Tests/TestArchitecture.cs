@@ -8,6 +8,7 @@ using System.Reflection;
 using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
 using RubiksAlgosNet;
+using RubiksAlgosNet.Agents.Impl;
 
 namespace Clprolf.ArchUnitNet.Tests
 {
@@ -19,7 +20,7 @@ namespace Clprolf.ArchUnitNet.Tests
     {
         public static readonly Architecture Architecture = new ArchLoader()
            // .LoadAssemblies(System.Reflection.Assembly.GetExecutingAssembly())
-           .LoadAssemblies(typeof(CubeManuLauncher).Assembly)
+           .LoadAssemblies(typeof(RubiksCube).Assembly)
             .Build();
     }
 }

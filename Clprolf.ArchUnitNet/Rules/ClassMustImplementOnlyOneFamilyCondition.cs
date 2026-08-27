@@ -28,7 +28,7 @@ namespace Clprolf.ArchUnitNet.Rules
 
                 // Counts the number of [ClFamily] interfaces implemented
                 int count =
-                    clazz.ImplementedInterfaces
+                    clazz.GetDirectlyImplementedInterfaces() //Do not use ImplementedInterfaces, because we only want direct interfaces
                         .Count(i => i.IsFamily());
 
                 bool ok =

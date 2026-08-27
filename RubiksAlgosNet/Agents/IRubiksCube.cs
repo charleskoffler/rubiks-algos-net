@@ -1,9 +1,11 @@
-﻿using RubiksAlgosNet.Agents.Impl;
+﻿using Clprolf.ArchUnitNet.Attributes;
+using RubiksAlgosNet.Agents.Impl;
 using RubiksAlgosNet.Enums;
 
 namespace RubiksAlgosNet.Agents
 {
-   
+    [ClDomain]
+    [ClFamily]
     public interface IRubiksCube
     {
        

@@ -135,7 +135,7 @@ namespace RubiksAlgosNet.Workers.Impl
 
             foreach (var piece in cube.Cubelets)
             {
-                var mouvementsSimplifies = RubiksCube.SimplifierMouvements(piece.Historique.Select(s => s.MouvementSubi));
+                var mouvementsSimplifies = RubiksCubeHelper.SimplifierMouvements(piece.Historique.Select(s => s.MouvementSubi));
 
                 if (mouvementsSimplifies.Count == 0) continue;
 

@@ -13,7 +13,7 @@ using static RubiksAlgosNet.Agents.ICubelet;
 namespace RubiksAlgosNet.Agents.Impl
 {
     [ClDomain]
-    public class RubiksCube : RubiksCubeHelper, IRubiksCube
+    public class RubiksCube : IRubiksCube
     {
         private readonly ICubeInfra worker;
         private readonly ICubeConsole consoleWorker;

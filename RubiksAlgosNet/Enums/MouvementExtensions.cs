@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Clprolf.ArchUnitNet.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace RubiksAlgosNet.Enums;
 
+[ClDraft]
 public static class MouvementExtensions
 {
     public static string ToNotation(this Mouvement mvt)
