@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Clprolf.ArchUnitNet.Rules;
 
-public static class ClassPredicatesExtensions
+public static class ClassExtensions
 {
     /// <summary>
     /// Renvoie uniquement les interfaces directement déclarées par la classe,
@@ -16,7 +16,8 @@ public static class ClassPredicatesExtensions
         var allInterfaces = clazz.ImplementedInterfaces.ToList();
 
         var inheritedInterfaces = allInterfaces
-            .SelectMany(i => i.ImplementedInterfaces)
+            .SelectMany(i => i.GetDirectlyInheritedInterfaces())
+            .Where(i => i != null)
             .ToHashSet();
 
         // Utilisation de Cast<Interface>() pour convertir proprement la séquence

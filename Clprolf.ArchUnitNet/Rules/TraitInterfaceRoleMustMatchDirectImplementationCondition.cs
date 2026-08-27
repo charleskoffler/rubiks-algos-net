@@ -34,7 +34,7 @@ internal sealed class TraitInterfaceRoleMustMatchDirectImplementationCondition :
                 continue;
             }
 
-            if (clazz.ImplementedInterfaces.IsNullOrEmpty())
+            if (clazz.GetDirectlyImplementedInterfaces().IsNullOrEmpty())
             {
                 yield return new ConditionResult(
                     clazz,
@@ -44,7 +44,7 @@ internal sealed class TraitInterfaceRoleMustMatchDirectImplementationCondition :
             }
 
             // Only interfaces that are [ClTrait] are extracted.
-            var traitInterfaces = clazz.ImplementedInterfaces.Where(i => i.IsTrait()).ToList();
+            var traitInterfaces = clazz.GetDirectlyImplementedInterfaces().Where(i => i.IsTrait()).ToList();
 
             // 2. If the class does not implement any traits, it is automatically valid.
             if (!traitInterfaces.Any())

@@ -27,7 +27,7 @@ namespace Clprolf.ArchUnitNet.Rules
                 }
 
                 // 2. If the class has no interfaces, it is automatically valid.
-                if (clazz.ImplementedInterfaces.IsNullOrEmpty())
+                if (clazz.GetDirectlyImplementedInterfaces().IsNullOrEmpty())
                 {
                     yield return new ConditionResult(
                         clazz,
@@ -38,12 +38,12 @@ namespace Clprolf.ArchUnitNet.Rules
 
                 // 3. Comprehensive validation of all implemented interfaces
                 // We ensure that NO interface is a Trait (unless it's a Bypass)
-                bool allInterfacesAreValid = clazz.ImplementedInterfaces.All(interf =>
+                bool allInterfacesAreValid = clazz.GetDirectlyImplementedInterfaces().All(interf =>
                     !interf.IsTrait() || clazz.HasInterfaceBypass()
                 );
 
                 // We retrieve the first Trait that's causing the problem to get a great error message
-                var faultyTrait = clazz.ImplementedInterfaces.FirstOrDefault(interf =>
+                var faultyTrait = clazz.GetDirectlyImplementedInterfaces().FirstOrDefault(interf =>
                     interf.IsTrait() && !clazz.HasInterfaceBypass()
                 );
 

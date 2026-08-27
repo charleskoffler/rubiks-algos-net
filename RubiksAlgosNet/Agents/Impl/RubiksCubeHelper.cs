@@ -10,7 +10,8 @@ namespace RubiksAlgosNet.Agents.Impl
     [ClAgent]
     public class RubiksCubeHelper: IRubiksCubeHelper
     {
-       
+        private RubiksCubeHelper() { }
+
         //Méthodes helper public static
 
         /// <summary>

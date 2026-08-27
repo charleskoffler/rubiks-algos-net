@@ -26,7 +26,7 @@ internal sealed class InheritingInterfaceRoleMustMatchTraitInterfaceTargetRoleCo
             }
 
             // Only parents that are [ClTrait] are extracted.
-            var parentTraitInterfaces = interf.ImplementedInterfaces.Where(p => p.IsTrait()).ToList();
+            var parentTraitInterfaces = interf.GetDirectlyInheritedInterfaces().Where(p => p.IsTrait()).ToList();
 
             // 2. If she does not inherit any Traits, she is automatically valid
             if (!parentTraitInterfaces.Any())

@@ -17,7 +17,7 @@ internal sealed class FamilyInterfaceTargetRoleMustMatchInheritedFamilyInterface
         foreach (var interf in objects)
         {
             // 1. If the interface does not inherit from anything, it is automatically valid
-            if (interf.ImplementedInterfaces.IsNullOrEmpty())
+            if (interf.GetDirectlyInheritedInterfaces().IsNullOrEmpty())
             {
                 yield return new ConditionResult(
                     interf,
@@ -27,7 +27,7 @@ internal sealed class FamilyInterfaceTargetRoleMustMatchInheritedFamilyInterface
             }
 
             // Only parent interfaces of type “Family” are extracted.
-            var parentFamilyInterfaces = interf.ImplementedInterfaces.Where(p => p.IsFamily()).ToList();
+            var parentFamilyInterfaces = interf.GetDirectlyInheritedInterfaces().Where(p => p.IsFamily()).ToList();
 
             // 2. If no parent is a Family interface, it is automatically valid
             if (!parentFamilyInterfaces.Any())

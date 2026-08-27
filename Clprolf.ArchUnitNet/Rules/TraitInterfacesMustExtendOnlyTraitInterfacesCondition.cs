@@ -25,7 +25,7 @@ internal sealed class TraitInterfacesMustExtendOnlyTraitInterfacesCondition : IC
                 continue;
             }
 
-            if (interf.ImplementedInterfaces.IsNullOrEmpty())
+            if (interf.GetDirectlyInheritedInterfaces().IsNullOrEmpty())
             {
                 yield return new ConditionResult(
                     interf,
@@ -34,13 +34,13 @@ internal sealed class TraitInterfacesMustExtendOnlyTraitInterfacesCondition : IC
                 continue;
             }
 
-            bool allParentsAreTraitsOrExternal = interf.ImplementedInterfaces.All(parent =>
+            bool allParentsAreTraitsOrExternal = interf.GetDirectlyInheritedInterfaces().All(parent =>
                 interf.HasInterfaceBypass()
                 || parent.IsTrait()
                 || !parent.IsClprolf()
             );
 
-            var faultyParent = interf.ImplementedInterfaces.FirstOrDefault(parent =>
+            var faultyParent = interf.GetDirectlyInheritedInterfaces().FirstOrDefault(parent =>
                 !interf.HasInterfaceBypass()
                 && !parent.IsTrait()
                 && parent.IsClprolf()

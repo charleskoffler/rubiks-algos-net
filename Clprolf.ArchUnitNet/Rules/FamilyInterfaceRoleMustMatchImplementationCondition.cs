@@ -26,7 +26,7 @@ internal sealed class FamilyInterfaceRoleMustMatchImplementationCondition : ICon
                 continue;
             }
 
-            var familyInterfaces = clazz.ImplementedInterfaces.Where(i => i.IsFamily()).ToList();
+            var familyInterfaces = clazz.GetDirectlyImplementedInterfaces().Where(i => i.IsFamily()).ToList();
 
             if (!familyInterfaces.Any())
             {
