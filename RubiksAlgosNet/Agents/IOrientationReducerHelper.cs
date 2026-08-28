@@ -7,7 +7,7 @@ namespace RubiksAlgos.Agents
 {
     [ClAgent]
     [ClFamily]
-    public interface IOrientationReducer
+    public interface IOrientationReducerHelper
     {
     }
 }

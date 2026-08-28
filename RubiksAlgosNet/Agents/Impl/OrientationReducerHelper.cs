@@ -9,11 +9,11 @@ using System.Text;
 namespace RubiksAlgos.Agents.Impl
 {
     [ClAgent]
-    public class OrientationReducer: IOrientationReducer
+    public class OrientationReducerHelper: IOrientationReducerHelper
     {
      // Exemples y' x = Z_Y3 ; x y = X_Y ; z' y2 = Z3_Y2 ; y2 z = Z3_Y2
 
-        private OrientationReducer() { }
+        private OrientationReducerHelper() { }
 
         // Représentation des 6 faces du cube par leur position initiale (0 à 5)
         // 0: Haut, 1: Bas, 2: Avant, 3: Arrière, 4: Droite, 5: Gauche

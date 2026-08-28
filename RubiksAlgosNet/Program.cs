@@ -4,6 +4,8 @@ using System.Numerics;
 using RubiksAlgosNet.Agents.Impl;
 using RubiksAlgosNet.Enums;
 using RubiksAlgos.Agents.Impl;
+using RubiksAlgos.Enums;
+using ArchUnitNET.Domain.Extensions;
 
 // RubiksAlgoNet Author Charles Koffler 27/8/2026
 // M.I.T License
@@ -16,4 +18,7 @@ Mouvement[] sequence = [Mouvement.R, Mouvement.U, Mouvement.RPrime, Mouvement.UP
 //cube.VoirTravailPieces();
 //cube.VoirMvtPiecesSimplifies();
 
-Console.WriteLine(OrientationReducer.ObtenirOrientation(new List<Mouvement> { Mouvement.y2, Mouvement.z}));
+//Console.WriteLine(OrientationReducerHelper.ObtenirOrientation(new List<Mouvement> { Mouvement.y2, Mouvement.z}));
+MovementTranslatorHelper.TraduireToute(new[] { Mouvement.R, Mouvement.L, Mouvement.U, Mouvement.D, Mouvement.F, Mouvement.B }, OrientationRoot.Y2).ForEach(m => Console.Write(m + " "));
+MovementTranslatorHelper.TraduireToute(new[] { Mouvement.R, Mouvement.L, Mouvement.U, Mouvement.D, Mouvement.F, Mouvement.B }, OrientationRoot.X2).ForEach(m => Console.Write(m + " "));
+
