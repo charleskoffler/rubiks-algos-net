@@ -169,6 +169,18 @@ internal class Cube3DInfra: ICubeInfra
                 else
                     cube.Executer(Mouvement.D);      // D -> D
             }
+            if (Raylib.IsKeyPressed(KeyboardKey.X))
+            {
+                cube.Executer(Mouvement.x);
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.Y))
+            {
+                cube.Executer(Mouvement.y);
+            }
+            if (Raylib.IsKeyPressed(KeyboardKey.Z))
+            {
+                cube.Executer(Mouvement.z);
+            }
 
             Raylib.EndMode3D();
 

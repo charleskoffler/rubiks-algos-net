@@ -1,13 +1,15 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
+using RubiksAlgos.Agents.Impl;
+using RubiksAlgos.Enums;
+using RubiksAlgosNet.Agents;
+using RubiksAlgosNet.Enums;
+using RubiksAlgosNet.Workers;
+using RubiksAlgosNet.Workers.Impl;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
-using RubiksAlgosNet.Agents;
-using RubiksAlgosNet.Enums;
-using RubiksAlgosNet.Workers;
-using RubiksAlgosNet.Workers.Impl;
 using static RubiksAlgosNet.Agents.ICubelet;
 
 namespace RubiksAlgosNet.Agents.Impl
@@ -20,7 +22,12 @@ namespace RubiksAlgosNet.Agents.Impl
 
         public List<Cubelet> Cubelets { get; } = new List<Cubelet>();
 
-        public List<Mouvement> HistoriqueMouvements { get; } = new();
+        public List<Mouvement> HistoriqueMouvementsRelatifs { get; } = new();
+
+        public List<Mouvement> HistoriqueMouvementsReels { get; } = new();
+
+        public List<Mouvement> ListeOrientations { get; } = new();
+        public OrientationRoot OrientationCourante = OrientationRoot.INIT;
 
         public RubiksCube()
         {
@@ -52,10 +59,12 @@ namespace RubiksAlgosNet.Agents.Impl
 
         public void Executer(Mouvement mvt)
         {
-            // 1. On garde la trace du mouvement global
-            HistoriqueMouvements.Add(mvt);
+            // 1. On garde la trace du mouvement, même les mouvements d'orientation (x, y, z)
+            HistoriqueMouvementsRelatifs.Add(mvt);
+            Mouvement mouvementReel = MovementTranslatorHelper.Traduire(mvt, OrientationCourante);
+            HistoriqueMouvementsReels.Add(mouvementReel); // On garde aussi la trace des mouvements d'orientation avec les mouvements reels, pour la caméra.
 
-            switch (mvt)
+            switch (mouvementReel)
             {
                 case Mouvement.R: Tourner_R(false); break;
                 case Mouvement.RPrime: Tourner_R(true); break;
@@ -69,6 +78,13 @@ namespace RubiksAlgosNet.Agents.Impl
                 case Mouvement.UPrime: Tourner_U(true); break;
                 case Mouvement.D: Tourner_D(false); break;
                 case Mouvement.DPrime: Tourner_D(true); break;
+                case Mouvement.x: case Mouvement.xPrime:
+                case Mouvement.y: case Mouvement.yPrime: case Mouvement.z: case Mouvement.zPrime:
+                case Mouvement.x2: case Mouvement.y2: case Mouvement.z2:
+                    ListeOrientations.Add(mvt);
+                    OrientationCourante = OrientationReducerHelper.ObtenirOrientation(ListeOrientations);
+                    break;
+
                 default: throw new NotSupportedException("Mouvement non supporté");
             }
         }
@@ -115,7 +131,8 @@ namespace RubiksAlgosNet.Agents.Impl
                     }
                 }
             }
-            HistoriqueMouvements.Add(Mouvement.INIT);
+            HistoriqueMouvementsRelatifs.Add(Mouvement.INIT);
+            HistoriqueMouvementsReels.Add(Mouvement.INIT);
         }
 
         // --- AXE X : R (Right: X=1) & L (Left: X=-1) ---

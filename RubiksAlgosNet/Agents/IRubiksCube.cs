@@ -11,7 +11,9 @@ namespace RubiksAlgosNet.Agents
        
         List<Cubelet> Cubelets { get; }
         // Historique de tous les mouvements demandés au cube dans l'ordre chronologique
-        List<Mouvement> HistoriqueMouvements { get; }
+        List<Mouvement> HistoriqueMouvementsRelatifs { get; }
+        List<Mouvement> HistoriqueMouvementsReels { get; }
+        List<Mouvement> ListeOrientations { get; }
 
         void Executer(Mouvement mvt);
         void ExecuterSequence(IEnumerable<Mouvement> sequence);

@@ -29,7 +29,7 @@ namespace RubiksAlgosNet.Agents
             Couleur Droite,
             Couleur Avant,
             Couleur Arriere,
-            Mouvement MouvementSubi
+            Mouvement MouvementSubiReel
         );
 
         Couleur Arriere { get; set; }

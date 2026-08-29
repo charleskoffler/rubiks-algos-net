@@ -28,6 +28,11 @@ namespace RubiksAlgos.Agents.Impl
             // 3. Recomposition du mouvement absolu
             return Recomposer(faceReelle, mod);
         }
+        public static bool EstRotationGlobale(Mouvement m) =>
+           m == Mouvement.x || m == Mouvement.xPrime || m == Mouvement.x2 ||
+           m == Mouvement.y || m == Mouvement.yPrime || m == Mouvement.y2 ||
+           m == Mouvement.z || m == Mouvement.zPrime || m == Mouvement.z2;
+
 
         private enum MvtVisuel { U, D, R, L, F, B }
         private enum MvtReel { U, D, R, L, F, B }
@@ -178,9 +183,5 @@ namespace RubiksAlgos.Agents.Impl
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        private static bool EstRotationGlobale(Mouvement m) =>
-            m == Mouvement.x || m == Mouvement.xPrime || m == Mouvement.x2 ||
-            m == Mouvement.y || m == Mouvement.yPrime || m == Mouvement.y2 ||
-            m == Mouvement.z || m == Mouvement.zPrime || m == Mouvement.z2;
     }
 }

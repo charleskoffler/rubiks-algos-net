@@ -52,7 +52,7 @@ namespace RubiksAlgosNet.Agents.Impl
 
         public List<Mouvement> ObtenirMouvementsSimplifies()
         {
-            return RubiksCubeHelper.SimplifierMouvements(Historique.Select(s => s.MouvementSubi));
+            return RubiksCubeHelper.SimplifierMouvements(Historique.Select(s => s.MouvementSubiReel));
         }
 
         // --- ROTATION AXE X (Faces R et L) ---

@@ -89,7 +89,7 @@ namespace RubiksAlgosNet.Workers.Impl
                     string orientation = string.Join(" ", facesVisibles.Select(f => $"{f.Nom}:{f.Couleur}"));
 
                     Console.WriteLine(
-                        $"  ➜ Mouvement {snapshot.MouvementSubi,-7} : Pos ({snapshot.X,2}, {snapshot.Y,2}, {snapshot.Z,2}) | " +
+                        $"  ➜ Mouvement {snapshot.MouvementSubiReel,-7} : Pos ({snapshot.X,2}, {snapshot.Y,2}, {snapshot.Z,2}) | " +
                         $"Faces [{orientation}]"
                     );
                 }
@@ -100,16 +100,16 @@ namespace RubiksAlgosNet.Workers.Impl
 
         public void AfficherHistoriqueParCoups()
         {
-            for (int i = 0; i < cube.HistoriqueMouvements.Count; i++)
+            for (int i = 0; i < cube.HistoriqueMouvementsReels.Count; i++)
             {
-                var mvtActuel = cube.HistoriqueMouvements[i];
+                var mvtActuel = cube.HistoriqueMouvementsReels[i];
 
                 Console.WriteLine($"--- Coup n°{i} : {mvtActuel} ---");
 
                 // On cherche le snapshot enregistré pour ce mouvement précis
                 var piecesImpactees = cube.Cubelets
                     .SelectMany(p => p.Historique, (piece, snap) => new { Piece = piece, Snap = snap })
-                    .Where(x => x.Snap.MouvementSubi == mvtActuel);
+                    .Where(x => x.Snap.MouvementSubiReel == mvtActuel);
 
                 foreach (var item in piecesImpactees)
                 {
@@ -126,8 +126,10 @@ namespace RubiksAlgosNet.Workers.Impl
 
         public void AfficherMouvementsSimplifiesTousLesCubelets()
         {
-            string sequence = HistoriqueAffichable();
-            Console.WriteLine($"Mouvements joués ({cube.HistoriqueMouvements.Count-1}) : {sequence}");
+            string sequence = HistoriqueAffichable(false);
+            Console.WriteLine($"Mouvements joués ({cube.HistoriqueMouvementsRelatifs.Count-1}) : {sequence}");
+            sequence = HistoriqueAffichable();
+            Console.WriteLine($"Mouvements réels ({cube.HistoriqueMouvementsReels.Count - 1}) : {sequence}");
 
             Console.WriteLine("=== MOUVEMENTS ET ORIENTATIONS PAR PIECES AFFECTEES ===");
 
@@ -135,7 +137,7 @@ namespace RubiksAlgosNet.Workers.Impl
 
             foreach (var piece in cube.Cubelets)
             {
-                var mouvementsSimplifies = RubiksCubeHelper.SimplifierMouvements(piece.Historique.Select(s => s.MouvementSubi));
+                var mouvementsSimplifies = RubiksCubeHelper.SimplifierMouvements(piece.Historique.Select(s => s.MouvementSubiReel));
 
                 if (mouvementsSimplifies.Count == 0) continue;
 
@@ -178,15 +180,17 @@ namespace RubiksAlgosNet.Workers.Impl
     }.Where(f => f.Couleur != Couleur.X);
         }
 
-        private string HistoriqueAffichable()
+        private string HistoriqueAffichable(bool reels = true)
         {
-            if (cube.HistoriqueMouvements.Count < 2)
+            var historique = reels ? cube.HistoriqueMouvementsReels : cube.HistoriqueMouvementsRelatifs;
+
+            if (historique.Count < 2)
             {
                 return "Historique vide.";
             }
 
             // Transforme chaque mouvement en sa représentation texte (ex: U, R', F2)
-            string sequence = string.Join(" ", cube.HistoriqueMouvements.Where(m => m != Mouvement.INIT).Select(m => m.ToNotation()));
+            string sequence = string.Join(" ", historique.Where(m => m != Mouvement.INIT).Select(m => m.ToNotation()));
 
             return sequence;
         }
