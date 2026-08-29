@@ -20,160 +20,160 @@ namespace RubiksAlgos.Agents.Impl
             if (EstRotationGlobale(mvt)) return mvt;
 
             // 1. Décomposition (sans cas 2)
-            (FaceVisuelle face, Modifier mod) = Decomposer(mvt);
+            (MvtVisuel face, Modifier mod) = Decomposer(mvt);
 
             // 2. Identification de la face réelle
-            FaceReelle faceReelle = ObtenirFaceReelle(face, orientation);
+            MvtReel faceReelle = ObtenirFaceReelle(face, orientation);
 
             // 3. Recomposition du mouvement absolu
             return Recomposer(faceReelle, mod);
         }
 
-        private enum FaceVisuelle { U, D, R, L, F, B }
-        private enum FaceReelle { U, D, R, L, F, B }
+        private enum MvtVisuel { U, D, R, L, F, B }
+        private enum MvtReel { U, D, R, L, F, B }
 
-        private static (FaceVisuelle, Modifier) Decomposer(Mouvement mvt) => mvt switch
+        private static (MvtVisuel, Modifier) Decomposer(Mouvement mvt) => mvt switch
         {
-            Mouvement.U => (FaceVisuelle.U, Modifier.Normal),
-            Mouvement.UPrime => (FaceVisuelle.U, Modifier.Prime),
+            Mouvement.U => (MvtVisuel.U, Modifier.Normal),
+            Mouvement.UPrime => (MvtVisuel.U, Modifier.Prime),
 
-            Mouvement.D => (FaceVisuelle.D, Modifier.Normal),
-            Mouvement.DPrime => (FaceVisuelle.D, Modifier.Prime),
+            Mouvement.D => (MvtVisuel.D, Modifier.Normal),
+            Mouvement.DPrime => (MvtVisuel.D, Modifier.Prime),
 
-            Mouvement.R => (FaceVisuelle.R, Modifier.Normal),
-            Mouvement.RPrime => (FaceVisuelle.R, Modifier.Prime),
+            Mouvement.R => (MvtVisuel.R, Modifier.Normal),
+            Mouvement.RPrime => (MvtVisuel.R, Modifier.Prime),
 
-            Mouvement.L => (FaceVisuelle.L, Modifier.Normal),
-            Mouvement.LPrime => (FaceVisuelle.L, Modifier.Prime),
+            Mouvement.L => (MvtVisuel.L, Modifier.Normal),
+            Mouvement.LPrime => (MvtVisuel.L, Modifier.Prime),
 
-            Mouvement.F => (FaceVisuelle.F, Modifier.Normal),
-            Mouvement.FPrime => (FaceVisuelle.F, Modifier.Prime),
+            Mouvement.F => (MvtVisuel.F, Modifier.Normal),
+            Mouvement.FPrime => (MvtVisuel.F, Modifier.Prime),
 
-            Mouvement.B => (FaceVisuelle.B, Modifier.Normal),
-            Mouvement.BPrime => (FaceVisuelle.B, Modifier.Prime),
+            Mouvement.B => (MvtVisuel.B, Modifier.Normal),
+            Mouvement.BPrime => (MvtVisuel.B, Modifier.Prime),
 
             _ => throw new ArgumentOutOfRangeException(nameof(mvt))
         };
 
-        private static FaceReelle ObtenirFaceReelle(FaceVisuelle v, OrientationRoot o)
+        private static MvtReel ObtenirFaceReelle(MvtVisuel v, OrientationRoot o)
         {
-            (FaceReelle haut, FaceReelle avant) = o switch
+            (MvtReel haut, MvtReel avant) = o switch
             {
-                OrientationRoot.INIT => (FaceReelle.U, FaceReelle.F),
-                OrientationRoot.Y => (FaceReelle.U, FaceReelle.R),
-                OrientationRoot.Y2 => (FaceReelle.U, FaceReelle.B),
-                OrientationRoot.Y3 => (FaceReelle.U, FaceReelle.L),
+                OrientationRoot.INIT => (MvtReel.U, MvtReel.F),
+                OrientationRoot.Y => (MvtReel.U, MvtReel.R),
+                OrientationRoot.Y2 => (MvtReel.U, MvtReel.B),
+                OrientationRoot.Y3 => (MvtReel.U, MvtReel.L),
 
-                OrientationRoot.X => (FaceReelle.F, FaceReelle.D),
-                OrientationRoot.X_Y => (FaceReelle.F, FaceReelle.R),
-                OrientationRoot.X_Y2 => (FaceReelle.F, FaceReelle.U),
-                OrientationRoot.X_Y3 => (FaceReelle.F, FaceReelle.L),
+                OrientationRoot.X => (MvtReel.F, MvtReel.D),
+                OrientationRoot.X_Y => (MvtReel.F, MvtReel.R),
+                OrientationRoot.X_Y2 => (MvtReel.F, MvtReel.U),
+                OrientationRoot.X_Y3 => (MvtReel.F, MvtReel.L),
 
-                OrientationRoot.X2 => (FaceReelle.D, FaceReelle.B),
-                OrientationRoot.X2_Y => (FaceReelle.D, FaceReelle.R),
-                OrientationRoot.X2_Y2 => (FaceReelle.D, FaceReelle.F),
-                OrientationRoot.X2_Y3 => (FaceReelle.D, FaceReelle.L),
+                OrientationRoot.X2 => (MvtReel.D, MvtReel.B),
+                OrientationRoot.X2_Y => (MvtReel.D, MvtReel.R),
+                OrientationRoot.X2_Y2 => (MvtReel.D, MvtReel.F),
+                OrientationRoot.X2_Y3 => (MvtReel.D, MvtReel.L),
 
-                OrientationRoot.X3 => (FaceReelle.B, FaceReelle.U),
-                OrientationRoot.X3_Y => (FaceReelle.B, FaceReelle.R),
-                OrientationRoot.X3_Y2 => (FaceReelle.B, FaceReelle.D),
-                OrientationRoot.X3_Y3 => (FaceReelle.B, FaceReelle.L),
+                OrientationRoot.X3 => (MvtReel.B, MvtReel.U),
+                OrientationRoot.X3_Y => (MvtReel.B, MvtReel.R),
+                OrientationRoot.X3_Y2 => (MvtReel.B, MvtReel.D),
+                OrientationRoot.X3_Y3 => (MvtReel.B, MvtReel.L),
 
-                OrientationRoot.Z => (FaceReelle.L, FaceReelle.F),
-                OrientationRoot.Z_Y => (FaceReelle.L, FaceReelle.D),
-                OrientationRoot.Z_Y2 => (FaceReelle.L, FaceReelle.B),
-                OrientationRoot.Z_Y3 => (FaceReelle.L, FaceReelle.U),
+                OrientationRoot.Z => (MvtReel.L, MvtReel.F),
+                OrientationRoot.Z_Y => (MvtReel.L, MvtReel.D),
+                OrientationRoot.Z_Y2 => (MvtReel.L, MvtReel.B),
+                OrientationRoot.Z_Y3 => (MvtReel.L, MvtReel.U),
 
-                OrientationRoot.Z3 => (FaceReelle.R, FaceReelle.F),
-                OrientationRoot.Z3_Y => (FaceReelle.R, FaceReelle.U),
-                OrientationRoot.Z3_Y2 => (FaceReelle.R, FaceReelle.B),
-                OrientationRoot.Z3_Y3 => (FaceReelle.R, FaceReelle.D),
+                OrientationRoot.Z3 => (MvtReel.R, MvtReel.F),
+                OrientationRoot.Z3_Y => (MvtReel.R, MvtReel.U),
+                OrientationRoot.Z3_Y2 => (MvtReel.R, MvtReel.B),
+                OrientationRoot.Z3_Y3 => (MvtReel.R, MvtReel.D),
 
-                _ => (FaceReelle.U, FaceReelle.F)
+                _ => (MvtReel.U, MvtReel.F)
             };
 
-            FaceReelle bas = Oppose(haut);
-            FaceReelle arriere = Oppose(avant);
-            FaceReelle droite = ProduitCroise(haut, avant);
-            FaceReelle gauche = Oppose(droite);
+            MvtReel bas = Oppose(haut);
+            MvtReel arriere = Oppose(avant);
+            MvtReel droite = DeduireMvtReelDroit(haut, avant);
+            MvtReel gauche = Oppose(droite);
 
             return v switch
             {
-                FaceVisuelle.U => haut,
-                FaceVisuelle.D => bas,
-                FaceVisuelle.F => avant,
-                FaceVisuelle.B => arriere,
-                FaceVisuelle.R => droite,
-                FaceVisuelle.L => gauche,
+                MvtVisuel.U => haut,
+                MvtVisuel.D => bas,
+                MvtVisuel.F => avant,
+                MvtVisuel.B => arriere,
+                MvtVisuel.R => droite,
+                MvtVisuel.L => gauche,
                 _ => throw new ArgumentOutOfRangeException(nameof(v))
             };
         }
 
-        private static FaceReelle Oppose(FaceReelle f) => f switch
+        private static MvtReel Oppose(MvtReel f) => f switch
         {
-            FaceReelle.U => FaceReelle.D,
-            FaceReelle.D => FaceReelle.U,
-            FaceReelle.F => FaceReelle.B,
-            FaceReelle.B => FaceReelle.F,
-            FaceReelle.R => FaceReelle.L,
-            FaceReelle.L => FaceReelle.R,
+            MvtReel.U => MvtReel.D,
+            MvtReel.D => MvtReel.U,
+            MvtReel.F => MvtReel.B,
+            MvtReel.B => MvtReel.F,
+            MvtReel.R => MvtReel.L,
+            MvtReel.L => MvtReel.R,
             _ => f
         };
 
-        private static FaceReelle ProduitCroise(FaceReelle haut, FaceReelle avant) => (haut, avant) switch
+        private static MvtReel DeduireMvtReelDroit(MvtReel reelPourVisuelHaut, MvtReel reelPourVisuelAvt) => (reelPourVisuelHaut, reelPourVisuelAvt) switch
         {
-            (FaceReelle.U, FaceReelle.F) => FaceReelle.R,
-            (FaceReelle.U, FaceReelle.R) => FaceReelle.B,
-            (FaceReelle.U, FaceReelle.B) => FaceReelle.L,
-            (FaceReelle.U, FaceReelle.L) => FaceReelle.F,
+            (MvtReel.U, MvtReel.F) => MvtReel.R,
+            (MvtReel.U, MvtReel.R) => MvtReel.B,
+            (MvtReel.U, MvtReel.B) => MvtReel.L,
+            (MvtReel.U, MvtReel.L) => MvtReel.F,
 
-            (FaceReelle.F, FaceReelle.D) => FaceReelle.R,
-            (FaceReelle.F, FaceReelle.R) => FaceReelle.U,
-            (FaceReelle.F, FaceReelle.U) => FaceReelle.L,
-            (FaceReelle.F, FaceReelle.L) => FaceReelle.D,
+            (MvtReel.F, MvtReel.D) => MvtReel.R,
+            (MvtReel.F, MvtReel.R) => MvtReel.U,
+            (MvtReel.F, MvtReel.U) => MvtReel.L,
+            (MvtReel.F, MvtReel.L) => MvtReel.D,
 
-            (FaceReelle.D, FaceReelle.B) => FaceReelle.R,
-            (FaceReelle.D, FaceReelle.R) => FaceReelle.F,
-            (FaceReelle.D, FaceReelle.F) => FaceReelle.L,
-            (FaceReelle.D, FaceReelle.L) => FaceReelle.B,
+            (MvtReel.D, MvtReel.B) => MvtReel.R,
+            (MvtReel.D, MvtReel.R) => MvtReel.F,
+            (MvtReel.D, MvtReel.F) => MvtReel.L,
+            (MvtReel.D, MvtReel.L) => MvtReel.B,
 
-            (FaceReelle.B, FaceReelle.U) => FaceReelle.R,
-            (FaceReelle.B, FaceReelle.R) => FaceReelle.D,
-            (FaceReelle.B, FaceReelle.D) => FaceReelle.L,
-            (FaceReelle.B, FaceReelle.L) => FaceReelle.U,
+            (MvtReel.B, MvtReel.U) => MvtReel.R,
+            (MvtReel.B, MvtReel.R) => MvtReel.D,
+            (MvtReel.B, MvtReel.D) => MvtReel.L,
+            (MvtReel.B, MvtReel.L) => MvtReel.U,
 
-            (FaceReelle.L, FaceReelle.F) => FaceReelle.U,
-            (FaceReelle.L, FaceReelle.D) => FaceReelle.F,
-            (FaceReelle.L, FaceReelle.B) => FaceReelle.D,
-            (FaceReelle.L, FaceReelle.U) => FaceReelle.B,
+            (MvtReel.L, MvtReel.F) => MvtReel.U,
+            (MvtReel.L, MvtReel.D) => MvtReel.F,
+            (MvtReel.L, MvtReel.B) => MvtReel.D,
+            (MvtReel.L, MvtReel.U) => MvtReel.B,
 
-            (FaceReelle.R, FaceReelle.F) => FaceReelle.D,
-            (FaceReelle.R, FaceReelle.U) => FaceReelle.F,
-            (FaceReelle.R, FaceReelle.B) => FaceReelle.U,
-            (FaceReelle.R, FaceReelle.D) => FaceReelle.B,
+            (MvtReel.R, MvtReel.F) => MvtReel.D,
+            (MvtReel.R, MvtReel.U) => MvtReel.F,
+            (MvtReel.R, MvtReel.B) => MvtReel.U,
+            (MvtReel.R, MvtReel.D) => MvtReel.B,
 
-            _ => FaceReelle.R
+            _ => MvtReel.R
         };
 
-        private static Mouvement Recomposer(FaceReelle face, Modifier mod) => (face, mod) switch
+        private static Mouvement Recomposer(MvtReel face, Modifier mod) => (face, mod) switch
         {
-            (FaceReelle.U, Modifier.Normal) => Mouvement.U,
-            (FaceReelle.U, Modifier.Prime) => Mouvement.UPrime,
+            (MvtReel.U, Modifier.Normal) => Mouvement.U,
+            (MvtReel.U, Modifier.Prime) => Mouvement.UPrime,
 
-            (FaceReelle.D, Modifier.Normal) => Mouvement.D,
-            (FaceReelle.D, Modifier.Prime) => Mouvement.DPrime,
+            (MvtReel.D, Modifier.Normal) => Mouvement.D,
+            (MvtReel.D, Modifier.Prime) => Mouvement.DPrime,
 
-            (FaceReelle.R, Modifier.Normal) => Mouvement.R,
-            (FaceReelle.R, Modifier.Prime) => Mouvement.RPrime,
+            (MvtReel.R, Modifier.Normal) => Mouvement.R,
+            (MvtReel.R, Modifier.Prime) => Mouvement.RPrime,
 
-            (FaceReelle.L, Modifier.Normal) => Mouvement.L,
-            (FaceReelle.L, Modifier.Prime) => Mouvement.LPrime,
+            (MvtReel.L, Modifier.Normal) => Mouvement.L,
+            (MvtReel.L, Modifier.Prime) => Mouvement.LPrime,
 
-            (FaceReelle.F, Modifier.Normal) => Mouvement.F,
-            (FaceReelle.F, Modifier.Prime) => Mouvement.FPrime,
+            (MvtReel.F, Modifier.Normal) => Mouvement.F,
+            (MvtReel.F, Modifier.Prime) => Mouvement.FPrime,
 
-            (FaceReelle.B, Modifier.Normal) => Mouvement.B,
-            (FaceReelle.B, Modifier.Prime) => Mouvement.BPrime,
+            (MvtReel.B, Modifier.Normal) => Mouvement.B,
+            (MvtReel.B, Modifier.Prime) => Mouvement.BPrime,
 
             _ => throw new ArgumentOutOfRangeException()
         };
