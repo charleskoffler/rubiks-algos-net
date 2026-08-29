@@ -4,6 +4,7 @@ using System.Numerics;
 using RubiksAlgosNet.Agents.Impl;
 using RubiksAlgosNet.Enums;
 using static RubiksAlgosNet.Agents.ICubelet;
+using RubiksAlgos.Agents.Impl;
 
 namespace RubiksAlgosNet.Workers.Impl;
 
@@ -39,11 +40,17 @@ internal class Cube3DInfra : ICubeInfra
         Raylib.InitWindow(800, 600, "Rubik's Cube 3D - Raylib-cs");
         Raylib.SetTargetFPS(60);
 
+        // 1. Où se trouve la caméra au démarrage (ex: en haut à droite en vue 3/4)
+        Vector3 positionInitiale = new Vector3(6.0f, 6.0f, 6.0f);
+
+        // 2. Quelle direction pointe vers le haut pour la caméra au démarrage (l'axe Y vers le haut)
+        Vector3 upInitial = new Vector3(0.0f, 1.0f, 0.0f);
+
         Camera3D camera = new Camera3D
         {
-            Position = new Vector3(6.0f, 6.0f, 6.0f),
+            Position = positionInitiale,
             Target = new Vector3(0.0f, 0.0f, 0.0f),
-            Up = new Vector3(0.0f, 1.0f, 0.0f),
+            Up = upInitial,
             FovY = 45.0f,
             Projection = CameraProjection.Perspective
         };
@@ -52,8 +59,7 @@ internal class Cube3DInfra : ICubeInfra
         float spacing = 1.0f;
         float stickerSize = 0.82f;
         float offset = cubeSize / 2.0f + 0.005f;
-        float angle90 = (float)(Math.PI / 2.0);
-
+        
         while (!Raylib.WindowShouldClose())
         {
             bool isShift = Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift);
@@ -82,39 +88,22 @@ internal class Cube3DInfra : ICubeInfra
                 camera.Up = Vector3.Transform(camera.Up, rotRight);
             }
 
-            // 3. ROTATIONS GLOBALES X, Y, Z (à 90°)
-            if (Raylib.IsKeyPressed(KeyboardKey.X))
-            {
+            // 3. ROTATIONS GLOBALES X, Y, Z
+          // 1.Inputs(le domaine calcule la nouvelle orientation)
+if (Raylib.IsKeyPressed(KeyboardKey.X))
                 cube.Executer(isShift ? Mouvement.xPrime : Mouvement.x);
-                float angle = isShift ? -angle90 : angle90;
-                Quaternion rotX = Quaternion.CreateFromAxisAngle(Vector3.UnitX, angle);
-                camera.Position = Vector3.Transform(camera.Position, rotX);
-                camera.Up = Vector3.Transform(camera.Up, rotX);
-            }
 
             if (Raylib.IsKeyPressed(KeyboardKey.Y))
-            {
                 cube.Executer(isShift ? Mouvement.yPrime : Mouvement.y);
-                float angle = isShift ? -angle90 : angle90;
-                Quaternion rotY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, angle);
-                camera.Position = Vector3.Transform(camera.Position, rotY);
-                camera.Up = Vector3.Transform(camera.Up, rotY);
-            }
 
-            if (Raylib.IsKeyPressed(KeyboardKey.W))
-            {
+            if (Raylib.IsKeyPressed(KeyboardKey.W) || Raylib.IsKeyPressed(KeyboardKey.Z))
                 cube.Executer(isShift ? Mouvement.zPrime : Mouvement.z);
 
-                // Dans le repère 3D : une rotation Z inverse l'angle pour correspondre au sens horaire du joueur
-                float angle = isShift ? -angle90 : angle90;
+            // 2. Mise à jour de la caméra depuis la valeur canonique du domaine
+            Quaternion rotGlobale = OrientationReducerHelper.ObtenirRotation(cube.OrientationCourante);
 
-                // Quaternion de rotation autour de l'axe Z du monde (0, 0, 1)
-                Quaternion rotZ = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, angle);
-
-                // On applique la rotation aux DEUX composantes
-                camera.Position = Vector3.Transform(camera.Position, rotZ);
-                camera.Up = Vector3.Transform(camera.Up, rotZ);
-            }
+            camera.Position = Vector3.Transform(positionInitiale, rotGlobale);
+            camera.Up = Vector3.Transform(upInitial, rotGlobale);
 
             // 4. RENDU
             Raylib.BeginDrawing();

@@ -19,6 +19,13 @@ namespace RubiksAlgos.Agents.Impl
         // 0: Haut, 1: Bas, 2: Avant, 3: Arrière, 4: Droite, 5: Gauche
         private enum Face { Haut = 0, Bas = 1, Avant = 2, Arriere = 3, Droite = 4, Gauche = 5 }
 
+        private static readonly float HalfPi = (float)(Math.PI / 2.0);
+
+        // Quaternions de rotation de base (90° sur chaque axe du monde)
+        private static readonly Quaternion QX = Quaternion.CreateFromAxisAngle(Vector3.UnitX, HalfPi);
+        private static readonly Quaternion QY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, HalfPi);
+        private static readonly Quaternion QZ = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, HalfPi);
+
         public static OrientationRoot ObtenirOrientation(IEnumerable<Mouvement> mouvements)
         {
             Face haut = Face.Haut;
@@ -31,6 +38,50 @@ namespace RubiksAlgos.Agents.Impl
             }
 
             return DeterminerOrientationRoot(haut, avant);
+        }
+
+        public static Quaternion ObtenirRotation(OrientationRoot orientation)
+        {
+            return orientation switch
+            {
+                // --- HAUT ---
+                OrientationRoot.INIT => Quaternion.Identity,
+                OrientationRoot.Y => QY,
+                OrientationRoot.Y2 => QY * QY,
+                OrientationRoot.Y3 => QY * QY * QY,
+
+                // --- BAS (X2) ---
+                OrientationRoot.X2 => QX * QX,
+                OrientationRoot.X2_Y => (QX * QX) * QY,
+                OrientationRoot.X2_Y2 => (QX * QX) * (QY * QY),
+                OrientationRoot.X2_Y3 => (QX * QX) * (QY * QY * QY),
+
+                // --- AVANT (X) ---
+                OrientationRoot.X => QX,
+                OrientationRoot.X_Y => QX * QY,
+                OrientationRoot.X_Y2 => QX * (QY * QY),
+                OrientationRoot.X_Y3 => QX * (QY * QY * QY),
+
+                // --- ARRIÈRE (X3) ---
+                OrientationRoot.X3 => QX * QX * QX,
+                OrientationRoot.X3_Y => (QX * QX * QX) * QY,
+                OrientationRoot.X3_Y2 => (QX * QX * QX) * (QY * QY),
+                OrientationRoot.X3_Y3 => (QX * QX * QX) * (QY * QY * QY),
+
+                // --- DROITE (Z3) ---
+                OrientationRoot.Z3 => QZ * QZ * QZ,
+                OrientationRoot.Z3_Y => (QZ * QZ * QZ) * QY,
+                OrientationRoot.Z3_Y2 => (QZ * QZ * QZ) * (QY * QY),
+                OrientationRoot.Z3_Y3 => (QZ * QZ * QZ) * (QY * QY * QY),
+
+                // --- GAUCHE (Z) ---
+                OrientationRoot.Z => QZ,
+                OrientationRoot.Z_Y => QZ * QY,
+                OrientationRoot.Z_Y2 => QZ * (QY * QY),
+                OrientationRoot.Z_Y3 => QZ * (QY * QY * QY),
+
+                _ => Quaternion.Identity
+            };
         }
 
         // Méthodes privées
