@@ -8,12 +8,11 @@ using static RubiksAlgosNet.Agents.ICubelet;
 namespace RubiksAlgosNet.Workers.Impl;
 
 [ClInfrastructure]
-internal class Cube3DInfra: ICubeInfra
+internal class Cube3DInfra : ICubeInfra
 {
     private readonly RubiksCube cube;
     public Cube3DInfra(RubiksCube cube) { this.cube = cube; }
 
-    // Couleurs officielles du Rubik's Cube
     static readonly Color ColorWhite = new Color(255, 255, 255, 255);
     static readonly Color ColorYellow = new Color(255, 213, 0, 255);
     static readonly Color ColorRed = new Color(185, 0, 0, 255);
@@ -31,13 +30,13 @@ internal class Cube3DInfra: ICubeInfra
             Couleur.O => ColorOrange,
             Couleur.G => ColorGreen,
             Couleur.B => ColorBlue,
-            _ => new Color(20, 20, 20, 255) // Plastique noir (Couleur.X)
+            _ => new Color(20, 20, 20, 255)
         };
     }
 
     public void AfficherCube()
     {
-        Raylib.InitWindow(800, 600, "Rubik's Cube 3D Coloré - Raylib-cs");
+        Raylib.InitWindow(800, 600, "Rubik's Cube 3D - Raylib-cs");
         Raylib.SetTargetFPS(60);
 
         Camera3D camera = new Camera3D
@@ -49,58 +48,86 @@ internal class Cube3DInfra: ICubeInfra
             Projection = CameraProjection.Perspective
         };
 
-        float angleX = 0.8f;
-        float angleY = 0.8f;
-        float distance = 10.0f;
-
         float cubeSize = 0.96f;
         float spacing = 1.0f;
-        float stickerSize = 0.82f; // Taille de l'autocollant coloré
-        float offset = cubeSize / 2.0f + 0.005f; // Légèrement au-dessus de la surface plastique
+        float stickerSize = 0.82f;
+        float offset = cubeSize / 2.0f + 0.005f;
+        float angle90 = (float)(Math.PI / 2.0);
 
         while (!Raylib.WindowShouldClose())
         {
-            // 1. Contrôle du ZOOM à la molette
-            float wheel = Raylib.GetMouseWheelMove();
-            distance -= wheel * 0.8f;
-            if (distance < 3.0f) distance = 3.0f;
-            if (distance > 25.0f) distance = 25.0f;
+            bool isShift = Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift);
 
-            // 2. Contrôle de la ROTATION avec le CLIC DROIT
+            // 1. ZOOM (déplace la position sur son axe de visée)
+            float wheel = Raylib.GetMouseWheelMove();
+            if (wheel != 0)
+            {
+                float dist = camera.Position.Length();
+                dist = Math.Clamp(dist - wheel * 0.8f, 3.0f, 25.0f);
+                camera.Position = Vector3.Normalize(camera.Position) * dist;
+            }
+
+            // 2. ROTATION LIBRE AU CLIC DROIT
             if (Raylib.IsMouseButtonDown(MouseButton.Right))
             {
                 Vector2 delta = Raylib.GetMouseDelta();
-                angleY -= delta.X * 0.005f;
-                angleX += delta.Y * 0.005f;
 
-                float limit = 1.5f;
-                if (angleX > limit) angleX = limit;
-                if (angleX < -limit) angleX = -limit;
+                Quaternion rotY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, -delta.X * 0.005f);
+                camera.Position = Vector3.Transform(camera.Position, rotY);
+                camera.Up = Vector3.Transform(camera.Up, rotY);
+
+                Vector3 right = Vector3.Normalize(Vector3.Cross(camera.Position, camera.Up));
+                Quaternion rotRight = Quaternion.CreateFromAxisAngle(right, delta.Y * 0.005f);
+                camera.Position = Vector3.Transform(camera.Position, rotRight);
+                camera.Up = Vector3.Transform(camera.Up, rotRight);
             }
 
-            camera.Position = new Vector3(
-                (float)(distance * Math.Cos(angleX) * Math.Sin(angleY)),
-                (float)(distance * Math.Sin(angleX)),
-                (float)(distance * Math.Cos(angleX) * Math.Cos(angleY))
-            );
+            // 3. ROTATIONS GLOBALES X, Y, Z (à 90°)
+            if (Raylib.IsKeyPressed(KeyboardKey.X))
+            {
+                cube.Executer(isShift ? Mouvement.xPrime : Mouvement.x);
+                float angle = isShift ? -angle90 : angle90;
+                Quaternion rotX = Quaternion.CreateFromAxisAngle(Vector3.UnitX, angle);
+                camera.Position = Vector3.Transform(camera.Position, rotX);
+                camera.Up = Vector3.Transform(camera.Up, rotX);
+            }
 
-            // 3. RENDU DE LA SCÈNE
+            if (Raylib.IsKeyPressed(KeyboardKey.Y))
+            {
+                cube.Executer(isShift ? Mouvement.yPrime : Mouvement.y);
+                float angle = isShift ? -angle90 : angle90;
+                Quaternion rotY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, angle);
+                camera.Position = Vector3.Transform(camera.Position, rotY);
+                camera.Up = Vector3.Transform(camera.Up, rotY);
+            }
+
+            if (Raylib.IsKeyPressed(KeyboardKey.W))
+            {
+                cube.Executer(isShift ? Mouvement.zPrime : Mouvement.z);
+
+                // Dans le repère 3D : une rotation Z inverse l'angle pour correspondre au sens horaire du joueur
+                float angle = isShift ? -angle90 : angle90;
+
+                // Quaternion de rotation autour de l'axe Z du monde (0, 0, 1)
+                Quaternion rotZ = Quaternion.CreateFromAxisAngle(Vector3.UnitZ, angle);
+
+                // On applique la rotation aux DEUX composantes
+                camera.Position = Vector3.Transform(camera.Position, rotZ);
+                camera.Up = Vector3.Transform(camera.Up, rotZ);
+            }
+
+            // 4. RENDU
             Raylib.BeginDrawing();
             Raylib.ClearBackground(new Color(30, 30, 30, 255));
 
             Raylib.BeginMode3D(camera);
 
-            // On parcourt nos 27 cubelets dynamiquement !
             foreach (var piece in cube.Cubelets)
             {
-                // Position 3D basée sur les coordonnées réelles du Cubelet
                 Vector3 pos = new Vector3(piece.X * spacing, piece.Y * spacing, piece.Z * spacing);
 
-                // Corps en plastique noir
                 Raylib.DrawCube(pos, cubeSize, cubeSize, cubeSize, new Color(20, 20, 20, 255));
                 Raylib.DrawCubeWires(pos, cubeSize, cubeSize, cubeSize, Color.Black);
-
-                // --- RENDU DES 6 STICKERS DYNAMIQUES ---
 
                 if (piece.Droite != Couleur.X)
                     DrawSticker(pos + new Vector3(offset, 0, 0), stickerSize, stickerSize, true, false, ObtenirCouleurRaylib(piece.Droite));
@@ -121,70 +148,17 @@ internal class Cube3DInfra: ICubeInfra
                     DrawSticker(pos + new Vector3(0, 0, -offset), stickerSize, stickerSize, false, false, ObtenirCouleurRaylib(piece.Arriere));
             }
 
-            // Exécution des mouvements en appuyant sur les touches du clavier
-            if (Raylib.IsKeyPressed(KeyboardKey.R))
-            {
-                if (Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift))
-                    cube.Executer(Mouvement.RPrime); // Maj + R -> R'
-                else
-                    cube.Executer(Mouvement.R);      // R -> R
-            }
-
-            if (Raylib.IsKeyPressed(KeyboardKey.L))
-            {
-                if (Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift))
-                    cube.Executer(Mouvement.LPrime); // Maj + L -> L'
-                else
-                    cube.Executer(Mouvement.L);      // L -> L
-            }
-
-            if (Raylib.IsKeyPressed(KeyboardKey.F))
-            {
-                if (Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift))
-                    cube.Executer(Mouvement.FPrime); // Maj + F -> F'
-                else
-                    cube.Executer(Mouvement.F);      // F -> F
-            }
-
-            if (Raylib.IsKeyPressed(KeyboardKey.B))
-            {
-                if (Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift))
-                    cube.Executer(Mouvement.BPrime); // Maj + B -> B'
-                else
-                    cube.Executer(Mouvement.B);      // B -> B
-            }
-
-            if (Raylib.IsKeyPressed(KeyboardKey.U))         
-            {
-                if (Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift))
-                    cube.Executer(Mouvement.UPrime); // Maj + U -> U'
-                else
-                    cube.Executer(Mouvement.U);      // U -> U
-            }
-
-            if (Raylib.IsKeyPressed(KeyboardKey.D))
-            {
-                if (Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift))
-                    cube.Executer(Mouvement.DPrime); // Maj + D -> D'
-                else
-                    cube.Executer(Mouvement.D);      // D -> D
-            }
-            if (Raylib.IsKeyPressed(KeyboardKey.X))
-            {
-                cube.Executer(Mouvement.x);
-            }
-            if (Raylib.IsKeyPressed(KeyboardKey.Y))
-            {
-                cube.Executer(Mouvement.y);
-            }
-            if (Raylib.IsKeyPressed(KeyboardKey.Z))
-            {
-                cube.Executer(Mouvement.z);
-            }
+            // 5. TRANCHES
+            if (Raylib.IsKeyPressed(KeyboardKey.R)) cube.Executer(isShift ? Mouvement.RPrime : Mouvement.R);
+            if (Raylib.IsKeyPressed(KeyboardKey.L)) cube.Executer(isShift ? Mouvement.LPrime : Mouvement.L);
+            if (Raylib.IsKeyPressed(KeyboardKey.F)) cube.Executer(isShift ? Mouvement.FPrime : Mouvement.F);
+            if (Raylib.IsKeyPressed(KeyboardKey.B)) cube.Executer(isShift ? Mouvement.BPrime : Mouvement.B);
+            if (Raylib.IsKeyPressed(KeyboardKey.U)) cube.Executer(isShift ? Mouvement.UPrime : Mouvement.U);
+            if (Raylib.IsKeyPressed(KeyboardKey.D)) cube.Executer(isShift ? Mouvement.DPrime : Mouvement.D);
 
             Raylib.EndMode3D();
 
-            Raylib.DrawText("CLIC DROIT : Tourner la caméra | MOLETTE : Zoom", 10, 10, 18, Color.White);
+            Raylib.DrawText("CLIC DROIT : Caméra libre | MOLETTE : Zoom | TOUCHES : R, L, U, D, F, B, X, Y, Z (+Shift)", 10, 10, 16, Color.White);
 
             Raylib.EndDrawing();
         }
@@ -192,32 +166,13 @@ internal class Cube3DInfra: ICubeInfra
         Raylib.CloseWindow();
     }
 
-    /// <summary>
-    /// On dessine un sticker = cube très fin.
-    /// </summary>
-    /// <param name="center"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="isXAxis"></param>
-    /// <param name="isYAxis"></param>
-    /// <param name="color"></param>
     public void DrawSticker(Vector3 center, float width, float height, bool isXAxis, bool isYAxis, Color color)
     {
         if (isXAxis)
-        {
-            // Plane orienté vers X (gauche/droite)
             Raylib.DrawCube(center, 0.01f, height, width, color);
-        }
         else if (isYAxis)
-        {
-            // Plane orienté vers Y (haut/bas)
             Raylib.DrawCube(center, width, 0.01f, height, color);
-        }
         else
-        {
-            // Plane orienté vers Z (avant/arrière)
             Raylib.DrawCube(center, width, height, 0.01f, color);
-        }
     }
-
 }
