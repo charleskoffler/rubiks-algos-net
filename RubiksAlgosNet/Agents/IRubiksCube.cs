@@ -15,7 +15,7 @@ namespace RubiksAlgosNet.Agents
         List<Mouvement> HistoriqueMouvementsReels { get; }
         List<Mouvement> ListeOrientations { get; }
 
-        void Executer(Mouvement mvt);
+        void Executer(Mouvement mvt, bool svgderHisto = true);
         void ExecuterSequence(IEnumerable<Mouvement> sequence);
 
         void Voir();

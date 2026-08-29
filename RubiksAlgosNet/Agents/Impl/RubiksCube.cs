@@ -57,12 +57,18 @@ namespace RubiksAlgosNet.Agents.Impl
             consoleWorker.AfficherMouvementsSimplifiesTousLesCubelets();
         }
 
-        public void Executer(Mouvement mvt)
+        public void Executer(Mouvement mvt, bool svgderHisto = true)
         {
             // 1. On garde la trace du mouvement, même les mouvements d'orientation (x, y, z)
-            HistoriqueMouvementsRelatifs.Add(mvt);
+            if (svgderHisto)
+            {
+                HistoriqueMouvementsRelatifs.Add(mvt);
+            }
             Mouvement mouvementReel = MovementTranslatorHelper.Traduire(mvt, OrientationCourante);
-            HistoriqueMouvementsReels.Add(mouvementReel); // On garde aussi la trace des mouvements d'orientation avec les mouvements reels, pour la caméra.
+            if (svgderHisto)
+            {
+                HistoriqueMouvementsReels.Add(mouvementReel); // On garde aussi la trace des mouvements d'orientation avec les mouvements reels, pour la caméra.
+            }
 
             switch (mouvementReel)
             {
@@ -78,10 +84,12 @@ namespace RubiksAlgosNet.Agents.Impl
                 case Mouvement.UPrime: Tourner_U(true); break;
                 case Mouvement.D: Tourner_D(false); break;
                 case Mouvement.DPrime: Tourner_D(true); break;
-                case Mouvement.M: Executer(Mouvement.R); Executer(Mouvement.LPrime); Executer(Mouvement.xPrime);  break;
-                case Mouvement.MPrime: Executer(Mouvement.L); Executer(Mouvement.RPrime); Executer(Mouvement.x); break;
-                case Mouvement.r: Executer(Mouvement.L); Executer(Mouvement.x); break;
-                case Mouvement.rPrime: Executer(Mouvement.LPrime); Executer(Mouvement.xPrime); break;
+
+                case Mouvement.M: Executer(Mouvement.R, false); Executer(Mouvement.LPrime, false); Executer(Mouvement.xPrime, false);  break;
+                case Mouvement.MPrime: Executer(Mouvement.L, false); Executer(Mouvement.RPrime, false); Executer(Mouvement.x, false); break;
+                case Mouvement.r: Executer(Mouvement.L, false); Executer(Mouvement.x, false); break;
+                case Mouvement.rPrime: Executer(Mouvement.LPrime, false); Executer(Mouvement.xPrime, false); break;
+
                 case Mouvement.x: case Mouvement.xPrime:
                 case Mouvement.y: case Mouvement.yPrime: case Mouvement.z: case Mouvement.zPrime:
                 case Mouvement.x2: case Mouvement.y2: case Mouvement.z2:
