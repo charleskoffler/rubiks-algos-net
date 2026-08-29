@@ -42,13 +42,14 @@ internal class Cube3DInfra : ICubeInfra
 
         // 1. Où se trouve la caméra au démarrage (ex: en haut à droite en vue 3/4)
         Vector3 positionInitiale = new Vector3(6.0f, 6.0f, 6.0f);
+     
+        Vector3 dirInitiale = Vector3.Normalize(new Vector3(1.0f, 1.0f, 1.0f));
+        float distance = 1f;
+        float distanceMin = 0.3f; // Permet de zoomer de très près
+        float distanceMax = 5.0f; // Limite pour ne pas trop s'éloigner
 
         // 2. Quelle direction pointe vers le haut pour la caméra au démarrage (l'axe Y vers le haut)
         Vector3 upInitial = new Vector3(0.0f, 1.0f, 0.0f);
-
-        // Angles d'orbite à la souris
-        float orbitYaw = 0.0f;   // Horizontal
-        float orbitPitch = 0.0f; // Vertical
 
         Camera3D camera = new Camera3D
         {
@@ -74,9 +75,8 @@ internal class Cube3DInfra : ICubeInfra
             float wheel = Raylib.GetMouseWheelMove();
             if (wheel != 0)
             {
-                float dist = camera.Position.Length();
-                dist = Math.Clamp(dist - wheel * 0.8f, 3.0f, 25.0f);
-                camera.Position = Vector3.Normalize(camera.Position) * dist;
+                distance -= wheel * 0.1f; // Sensibilité du zoom
+                distance = Math.Clamp(distance, distanceMin, distanceMax); // Empêche de trop s'approcher ou de trop s'éloigner
             }
 
             // ROTATION LIBRE AU CLIC DROIT
@@ -92,7 +92,7 @@ internal class Cube3DInfra : ICubeInfra
                 deltaSourisY += mouseDelta.Y * 0.005f;
 
                 // Bloquer le pitch pour éviter le retournement de la vue
-                deltaSourisY = Math.Clamp(deltaSourisY, -1.4f, 1.4f);
+                //deltaSourisY = Math.Clamp(deltaSourisY, -1.4f, 1.4f);
             }
 
             // ROTATIONS GLOBALES X, Y, Z
@@ -131,9 +131,10 @@ internal class Cube3DInfra : ICubeInfra
             Quaternion qPitch = Quaternion.CreateFromAxisAngle(rightLocal, -deltaSourisY);
 
             Quaternion qMouse = qYaw * qPitch;
+            Vector3 dirFinale = Vector3.Transform(basePos, qMouse);
 
             // La caméra orbitale finale
-            camera.Position = Vector3.Transform(basePos, qMouse);
+            camera.Position = dirFinale * distance;
             camera.Up = Vector3.Transform(baseUp, qMouse);
 
             // RENDU
