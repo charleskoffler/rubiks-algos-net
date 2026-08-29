@@ -78,6 +78,10 @@ namespace RubiksAlgosNet.Agents.Impl
                 case Mouvement.UPrime: Tourner_U(true); break;
                 case Mouvement.D: Tourner_D(false); break;
                 case Mouvement.DPrime: Tourner_D(true); break;
+                case Mouvement.M: Executer(Mouvement.R); Executer(Mouvement.LPrime); Executer(Mouvement.xPrime);  break;
+                case Mouvement.MPrime: Executer(Mouvement.L); Executer(Mouvement.RPrime); Executer(Mouvement.x); break;
+                case Mouvement.r: Executer(Mouvement.L); Executer(Mouvement.x); break;
+                case Mouvement.rPrime: Executer(Mouvement.LPrime); Executer(Mouvement.xPrime); break;
                 case Mouvement.x: case Mouvement.xPrime:
                 case Mouvement.y: case Mouvement.yPrime: case Mouvement.z: case Mouvement.zPrime:
                 case Mouvement.x2: case Mouvement.y2: case Mouvement.z2:
@@ -146,6 +150,7 @@ namespace RubiksAlgosNet.Agents.Impl
         // --- AXE Z : F (Front: Z=1) & B (Back: Z=-1) ---
         internal void Tourner_F(bool prime = false) => ExecuterRotation(c => c.Z == 1, c => c.AppliquerRotationZ(!prime, prime ? Mouvement.FPrime : Mouvement.F));
         internal void Tourner_B(bool prime = false) => ExecuterRotation(c => c.Z == -1, c => c.AppliquerRotationZ(prime, prime ? Mouvement.BPrime : Mouvement.B));
+       
 
     }
 }

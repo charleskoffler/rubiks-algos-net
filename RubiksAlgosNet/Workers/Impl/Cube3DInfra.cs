@@ -70,6 +70,7 @@ internal class Cube3DInfra : ICubeInfra
         while (!Raylib.WindowShouldClose())
         {
             bool isShift = Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift);
+            bool isCtrl = Raylib.IsKeyDown(KeyboardKey.LeftControl) || Raylib.IsKeyDown(KeyboardKey.RightControl);
 
             // ZOOM (déplace la position sur son axe de visée)
             float wheel = Raylib.GetMouseWheelMove();
@@ -103,7 +104,9 @@ internal class Cube3DInfra : ICubeInfra
             if (Raylib.IsKeyPressed(KeyboardKey.Y))
                 cube.Executer(isShift ? Mouvement.yPrime : Mouvement.y);
 
-            if (Raylib.IsKeyPressed(KeyboardKey.W) || Raylib.IsKeyPressed(KeyboardKey.Z))
+            bool isZPressed = Raylib.IsKeyPressed(KeyboardKey.W);
+
+            if (isZPressed)
                 cube.Executer(isShift ? Mouvement.zPrime : Mouvement.z);
 
             // OBTENTION DE LA ROTATION DU CUBE (OrientationRoot) ---
@@ -169,13 +172,21 @@ internal class Cube3DInfra : ICubeInfra
                     DrawSticker(pos + new Vector3(0, 0, -offset), stickerSize, stickerSize, false, false, ObtenirCouleurRaylib(piece.Arriere));
             }
 
-            // 5. TRANCHES
-            if (Raylib.IsKeyPressed(KeyboardKey.R)) cube.Executer(isShift ? Mouvement.RPrime : Mouvement.R);
+            //  TRANCHES
+            
+            if (Raylib.IsKeyPressed(KeyboardKey.R) && !isCtrl) cube.Executer(isShift ? Mouvement.RPrime : Mouvement.R);
             if (Raylib.IsKeyPressed(KeyboardKey.L)) cube.Executer(isShift ? Mouvement.LPrime : Mouvement.L);
             if (Raylib.IsKeyPressed(KeyboardKey.F)) cube.Executer(isShift ? Mouvement.FPrime : Mouvement.F);
             if (Raylib.IsKeyPressed(KeyboardKey.B)) cube.Executer(isShift ? Mouvement.BPrime : Mouvement.B);
             if (Raylib.IsKeyPressed(KeyboardKey.U)) cube.Executer(isShift ? Mouvement.UPrime : Mouvement.U);
             if (Raylib.IsKeyPressed(KeyboardKey.D)) cube.Executer(isShift ? Mouvement.DPrime : Mouvement.D);
+
+            if (Raylib.IsKeyPressed(KeyboardKey.R) && isCtrl) cube.Executer(isShift ? Mouvement.rPrime : Mouvement.r);
+
+            bool isMPressed = Raylib.IsKeyPressed(KeyboardKey.Semicolon)
+               || Raylib.IsKeyPressed(KeyboardKey.Comma);
+
+            if (isMPressed) cube.Executer(isShift ? Mouvement.MPrime : Mouvement.M);
 
             Raylib.EndMode3D();
 

@@ -17,7 +17,7 @@ namespace RubiksAlgos.Agents.Impl
 
         public static Mouvement Traduire(Mouvement mvt, OrientationRoot orientation)
         {
-            if (EstRotationGlobale(mvt)) return mvt;
+            if (EstRotationGlobaleOuMetaMvt(mvt)) return mvt;
 
             // 1. Décomposition (sans cas 2)
             (MvtVisuel face, Modifier mod) = Decomposer(mvt);
@@ -28,11 +28,11 @@ namespace RubiksAlgos.Agents.Impl
             // 3. Recomposition du mouvement absolu
             return Recomposer(faceReelle, mod);
         }
-        public static bool EstRotationGlobale(Mouvement m) =>
+        public static bool EstRotationGlobaleOuMetaMvt(Mouvement m) =>
            m == Mouvement.x || m == Mouvement.xPrime || m == Mouvement.x2 ||
            m == Mouvement.y || m == Mouvement.yPrime || m == Mouvement.y2 ||
-           m == Mouvement.z || m == Mouvement.zPrime || m == Mouvement.z2;
-
+           m == Mouvement.z || m == Mouvement.zPrime || m == Mouvement.z2 ||
+           m == Mouvement.M || m == Mouvement.MPrime || m == Mouvement.r || m == Mouvement.rPrime;
 
         private enum MvtVisuel { U, D, R, L, F, B }
         private enum MvtReel { U, D, R, L, F, B }
