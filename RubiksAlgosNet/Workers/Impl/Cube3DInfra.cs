@@ -46,6 +46,10 @@ internal class Cube3DInfra : ICubeInfra
         // 2. Quelle direction pointe vers le haut pour la caméra au démarrage (l'axe Y vers le haut)
         Vector3 upInitial = new Vector3(0.0f, 1.0f, 0.0f);
 
+        // Angles d'orbite à la souris
+        float orbitYaw = 0.0f;   // Horizontal
+        float orbitPitch = 0.0f; // Vertical
+
         Camera3D camera = new Camera3D
         {
             Position = positionInitiale,
@@ -59,12 +63,14 @@ internal class Cube3DInfra : ICubeInfra
         float spacing = 1.0f;
         float stickerSize = 0.82f;
         float offset = cubeSize / 2.0f + 0.005f;
-        
+        float deltaSourisX = 0.0f;
+        float deltaSourisY = 0.0f;
+
         while (!Raylib.WindowShouldClose())
         {
             bool isShift = Raylib.IsKeyDown(KeyboardKey.LeftShift) || Raylib.IsKeyDown(KeyboardKey.RightShift);
 
-            // 1. ZOOM (déplace la position sur son axe de visée)
+            // ZOOM (déplace la position sur son axe de visée)
             float wheel = Raylib.GetMouseWheelMove();
             if (wheel != 0)
             {
@@ -73,24 +79,25 @@ internal class Cube3DInfra : ICubeInfra
                 camera.Position = Vector3.Normalize(camera.Position) * dist;
             }
 
-            // 2. ROTATION LIBRE AU CLIC DROIT
+            // ROTATION LIBRE AU CLIC DROIT
+            // --- GESTION DU CLIC DROIT (Rotation manuelle de l'utilisateur) ---
             if (Raylib.IsMouseButtonDown(MouseButton.Right))
             {
-                Vector2 delta = Raylib.GetMouseDelta();
+                Vector2 mouseDelta = Raylib.GetMouseDelta();
 
-                Quaternion rotY = Quaternion.CreateFromAxisAngle(Vector3.UnitY, -delta.X * 0.005f);
-                camera.Position = Vector3.Transform(camera.Position, rotY);
-                camera.Up = Vector3.Transform(camera.Up, rotY);
+                // Gauche / Droite
+                deltaSourisX -= mouseDelta.X * 0.005f;
 
-                Vector3 right = Vector3.Normalize(Vector3.Cross(camera.Position, camera.Up));
-                Quaternion rotRight = Quaternion.CreateFromAxisAngle(right, delta.Y * 0.005f);
-                camera.Position = Vector3.Transform(camera.Position, rotRight);
-                camera.Up = Vector3.Transform(camera.Up, rotRight);
+                // Haut / Bas
+                deltaSourisY += mouseDelta.Y * 0.005f;
+
+                // Bloquer le pitch pour éviter le retournement de la vue
+                deltaSourisY = Math.Clamp(deltaSourisY, -1.4f, 1.4f);
             }
 
-            // 3. ROTATIONS GLOBALES X, Y, Z
-          // 1.Inputs(le domaine calcule la nouvelle orientation)
-if (Raylib.IsKeyPressed(KeyboardKey.X))
+            // ROTATIONS GLOBALES X, Y, Z
+            // Inputs(le domaine calcule la nouvelle orientation)
+            if (Raylib.IsKeyPressed(KeyboardKey.X))
                 cube.Executer(isShift ? Mouvement.xPrime : Mouvement.x);
 
             if (Raylib.IsKeyPressed(KeyboardKey.Y))
@@ -99,13 +106,37 @@ if (Raylib.IsKeyPressed(KeyboardKey.X))
             if (Raylib.IsKeyPressed(KeyboardKey.W) || Raylib.IsKeyPressed(KeyboardKey.Z))
                 cube.Executer(isShift ? Mouvement.zPrime : Mouvement.z);
 
-            // 2. Mise à jour de la caméra depuis la valeur canonique du domaine
-            Quaternion rotGlobale = OrientationReducerHelper.ObtenirRotation(cube.OrientationCourante);
+            // OBTENTION DE LA ROTATION DU CUBE (OrientationRoot) ---
+            Quaternion rotCube = OrientationReducerHelper.ObtenirRotation(cube.OrientationCourante);
 
-            camera.Position = Vector3.Transform(positionInitiale, rotGlobale);
-            camera.Up = Vector3.Transform(upInitial, rotGlobale);
+            Vector3 basePos = Vector3.Transform(positionInitiale, rotCube);
+            Vector3 baseUp = Vector3.Transform(upInitial, rotCube);
 
-            // 4. RENDU
+            // Déplacement de la souris (on garde la même accumulation)
+            if (Raylib.IsMouseButtonDown(MouseButton.Right))
+            {
+                Vector2 mouseDelta = Raylib.GetMouseDelta();
+
+                deltaSourisX -= mouseDelta.X * 0.005f;
+                deltaSourisY += mouseDelta.Y * 0.005f;
+
+                deltaSourisY = Math.Clamp(deltaSourisY, -1.4f, 1.4f);
+            }
+
+            // Repère local standard
+            Vector3 rightLocal = Vector3.Normalize(Vector3.Cross(baseUp, -basePos));
+
+            Quaternion qYaw = Quaternion.CreateFromAxisAngle(baseUp, deltaSourisX);
+
+            Quaternion qPitch = Quaternion.CreateFromAxisAngle(rightLocal, -deltaSourisY);
+
+            Quaternion qMouse = qYaw * qPitch;
+
+            // La caméra orbitale finale
+            camera.Position = Vector3.Transform(basePos, qMouse);
+            camera.Up = Vector3.Transform(baseUp, qMouse);
+
+            // RENDU
             Raylib.BeginDrawing();
             Raylib.ClearBackground(new Color(30, 30, 30, 255));
 
