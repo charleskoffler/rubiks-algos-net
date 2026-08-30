@@ -2,12 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using RubiksAlgosNet.Agents.Impl;
-using RubiksAlgosNet.Enums;
-using static RubiksAlgosNet.Agents.ICubelet;
-using static RubiksAlgosNet.Agents.IRubiksCube;
+using RubiksAlgos.Agents.Impl;
+using RubiksAlgos.Enums;
+using static RubiksAlgos.Agents.ICubelet;
 
-namespace RubiksAlgosNet.Workers.Impl
+namespace RubiksAlgos.Workers.Impl
 {
     [ClInfrastructure]
     internal class CubeConsole : ICubeConsole

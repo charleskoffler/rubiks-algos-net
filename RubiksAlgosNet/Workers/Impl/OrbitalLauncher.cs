@@ -6,7 +6,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace RubiksAlgosNet.Workers.Impl
+namespace RubiksAlgos.Workers.Impl
 {
     [ClMechanism]
     public class OrbitalLauncher : IOrbitalLauncher

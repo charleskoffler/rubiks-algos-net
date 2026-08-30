@@ -2,10 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using RubiksAlgosNet.Enums;
-using static RubiksAlgosNet.Agents.IRubiksCube;
+using RubiksAlgos.Enums;
 
-namespace RubiksAlgosNet.Agents.Impl
+namespace RubiksAlgos.Agents.Impl
 {
     [ClAgent]
     public class RubiksCubeHelper: IRubiksCubeHelper

@@ -1,6 +1,6 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
 
-namespace RubiksAlgosNet.Workers
+namespace RubiksAlgos.Workers
 {
     [ClInfrastructure]
     [ClFamily]

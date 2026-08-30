@@ -1,8 +1,8 @@
 ﻿using Raylib_cs;
 using System.Numerics;
 
-using RubiksAlgosNet.Agents.Impl;
-using RubiksAlgosNet.Enums;
+using RubiksAlgos.Agents.Impl;
+using RubiksAlgos.Enums;
 using RubiksAlgos.Agents.Impl;
 using RubiksAlgos.Enums;
 using ArchUnitNET.Domain.Extensions;

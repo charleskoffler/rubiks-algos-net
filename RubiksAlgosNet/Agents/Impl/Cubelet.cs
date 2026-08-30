@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using RubiksAlgosNet.Enums;
-using static RubiksAlgosNet.Agents.ICubelet;
+using RubiksAlgos.Enums;
+using static RubiksAlgos.Agents.ICubelet;
 
-namespace RubiksAlgosNet.Agents.Impl
+namespace RubiksAlgos.Agents.Impl
 {
     [ClDomain]
     public class Cubelet : ICubelet

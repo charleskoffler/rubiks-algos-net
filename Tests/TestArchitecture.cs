@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Reflection;
 using ArchUnitNET.Domain;
 using ArchUnitNET.Loader;
-using RubiksAlgosNet;
-using RubiksAlgosNet.Agents.Impl;
+using RubiksAlgos;
+using RubiksAlgos.Agents.Impl;
 
 namespace Clprolf.ArchUnitNet.Tests
 {

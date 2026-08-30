@@ -13,7 +13,7 @@ namespace Clprolf.ArchUnitNet.Tests
     [ClAgent]
     public class ClprolfArchRulesTests
     {
-        public static string TargetNamespace = "RubiksAlgosNet";
+        public static string TargetNamespace = "RubiksAlgos";
 
         [Fact]
         public void ClprolfClassesMustNotMixAgentAndWorker()

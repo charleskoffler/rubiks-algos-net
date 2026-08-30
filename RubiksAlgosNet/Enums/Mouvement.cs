@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RubiksAlgosNet.Enums
+namespace RubiksAlgos.Enums
 {
     public enum Mouvement : int
     {

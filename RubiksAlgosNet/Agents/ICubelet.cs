@@ -1,7 +1,7 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
-using RubiksAlgosNet.Enums;
+using RubiksAlgos.Enums;
 
-namespace RubiksAlgosNet.Agents
+namespace RubiksAlgos.Agents
 {
     [ClDomain]
     [ClFamily]

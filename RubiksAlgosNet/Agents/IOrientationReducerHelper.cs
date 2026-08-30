@@ -1,6 +1,5 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
 using RubiksAlgos.Enums;
-using RubiksAlgosNet.Enums;
 using System;
 using System.Collections.Generic;
 using System.Numerics;

@@ -1,12 +1,11 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
 using Raylib_cs;
 using System.Numerics;
-using RubiksAlgosNet.Agents.Impl;
-using RubiksAlgosNet.Enums;
-using static RubiksAlgosNet.Agents.ICubelet;
 using RubiksAlgos.Agents.Impl;
+using RubiksAlgos.Enums;
+using static RubiksAlgos.Agents.ICubelet;
 
-namespace RubiksAlgosNet.Workers.Impl;
+namespace RubiksAlgos.Workers.Impl;
 
 [ClInfrastructure]
 internal class Cube3DInfra : ICubeInfra

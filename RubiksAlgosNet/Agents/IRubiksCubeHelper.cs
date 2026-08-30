@@ -1,8 +1,8 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
 using System.Numerics;
-using RubiksAlgosNet.Enums;
+using RubiksAlgos.Enums;
 
-namespace RubiksAlgosNet.Agents
+namespace RubiksAlgos.Agents
 {
     [ClAgent]
     [ClFamily]

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace RubiksAlgosNet.Enums;
+namespace RubiksAlgos.Enums;
 
 [ClDraft]
 public static class MouvementExtensions

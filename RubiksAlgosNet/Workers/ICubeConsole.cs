@@ -1,7 +1,7 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
-using RubiksAlgosNet.Agents.Impl;
 
-namespace RubiksAlgosNet.Workers.Impl
+
+namespace RubiksAlgos.Workers.Impl
 {
     [ClInfrastructure]
     [ClFamily]

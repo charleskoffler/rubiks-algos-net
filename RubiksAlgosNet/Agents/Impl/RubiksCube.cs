@@ -1,18 +1,15 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
-using RubiksAlgos.Agents.Impl;
 using RubiksAlgos.Enums;
-using RubiksAlgosNet.Agents;
-using RubiksAlgosNet.Enums;
-using RubiksAlgosNet.Workers;
-using RubiksAlgosNet.Workers.Impl;
+using RubiksAlgos.Workers;
+using RubiksAlgos.Workers.Impl;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
-using static RubiksAlgosNet.Agents.ICubelet;
+using static RubiksAlgos.Agents.ICubelet;
 
-namespace RubiksAlgosNet.Agents.Impl
+namespace RubiksAlgos.Agents.Impl
 {
     [ClDomain]
     public class RubiksCube : IRubiksCube

@@ -1,10 +1,10 @@
 ﻿using Clprolf.ArchUnitNet.Attributes;
 using RubiksAlgos.Enums;
-using RubiksAlgosNet.Enums;
 
 namespace RubiksAlgos.Agents
 {
     [ClAgent]
+    [ClFamily]
     public interface IMovementTranslatorHelper
     {
         /// <summary>
